@@ -7,7 +7,7 @@ apt update -y
 apt install curl -y
 apt install wondershaper -y
 apt install lolcat -y
-sudo gem install lolcat
+gem install lolcat
 
 # Define color variables for output
 Green="\e[92;1m"
@@ -26,45 +26,48 @@ green='\e[0;32m'
 TIME=$(date '+%d %b %Y')
 ipsaya=$(wget -qO- ipinfo.io/ip)
 TIMES="10"
-CHATID="5044190184"
-KEY="7400468502:AAFDoXxOj3CNwasOXezFuq8LZoBNBm4LZxY"
+CHATID="6963467198"
+KEY="7660539264:AAEFVAHnxB4OI2Xol1ovVDMJ4r2h1NVW468"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 
 # Clear screen and set IP address
-clear && clear && clear
-clear; clear; clear
+clear
+export IP=$(curl -sS icanhazip.com)
+clear
 
 # Display welcome message
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
-echo -e "\033[96;1m               SENVAK AUTOSCRIPT                      \033[0m"
+echo -e "\033[96;1m              SCLANS AUTOSCRIPT                      \033[0m"
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo ""
-sleep 3
+sleep 1
 
-
-# Periksa arsitektur sistem
-ARCH=$(uname -m)
-if [[ "$ARCH" == "x86_64" ]]; then
-  echo -e "${OK} Your Architecture Is Supported (${GREEN}${ARCH}${NC})"
+# Check system architecture
+if [[ $(uname -m | awk '{print $1}') == "x86_64" ]]; then
+  echo -e "${OK} Your Architecture Is Supported ( ${green}$(uname -m)${NC} )"
 else
-  echo -e "${EROR} Your Architecture Is Not Supported (${YELLOW}${ARCH}${NC})"
+  echo -e "${EROR} Your Architecture Is Not Supported ( ${YELLOW}$(uname -m)${NC} )"
   exit 1
 fi
 
-# Periksa jenis OS
-OS_ID=$(awk -F= '/^ID=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
-OS_NAME=$(awk -F= '/^PRETTY_NAME=/{gsub(/"/, "", $2); print $2}' /etc/os-release)
-
-if [[ "$OS_ID" == "ubuntu" || "$OS_ID" == "debian" ]]; then
-  echo -e "${OK} Your OS Is Supported (${GREEN}${OS_NAME}${NC})"
+# Check OS type
+if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
+  echo -e "${OK} Your OS Is Supported ( ${green}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC} )"
+elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
+  echo -e "${OK} Your OS Is Supported ( ${green}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC} )"
 else
-  echo -e "${EROR} Your OS Is Not Supported (${YELLOW}${OS_NAME}${NC})"
+  echo -e "${EROR} Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC} )"
   exit 1
 fi
 
-# Jalankan instalasi tanpa menunggu input pengguna
+# Check IP address
+if [[ $ipsaya == "" ]]; then
+  echo -e "${EROR} IP Address ( ${RED}Not Detected${NC} )"
+else
+  echo -e "${OK} IP Address ( ${green}$IP${NC} )"
+fi
 echo ""
-echo -e "Starting Installation..."
+read -p "$(echo -e "Press ${GRAY}[ ${NC}${green}Enter${NC} ${GRAY}]${NC} For Starting Installation") "
 echo ""
 clear
 
@@ -80,6 +83,18 @@ if [ "$(systemd-detect-virt)" == "openvz" ]; then
   exit 1
 fi
 
+# Set up IP address variables
+red='\e[1;31m'
+green='\e[0;32m'
+NC='\e[0m'
+MYIP=$(curl -sS ipv4.icanhazip.com)
+echo -e "\e[32mloading...\e[0m"
+clear
+MYIP=$(curl -sS ipv4.icanhazip.com)
+echo -e "\e[32mloading...\e[0m"
+clear
+
+clear
 REPO="https://raw.githubusercontent.com/raffasyaa/skt/main/"
 start=$(date +%s)
 secs_to_human() {
@@ -214,94 +229,79 @@ function base_package() {
 }
 clear
 
-# Fungsi untuk mengkonfigurasi domain
+# Define color variables
+NC='\e[0m'
+
+# Function to configure domain
 function pasang_domain() {
   clear
-  echo -e ""
   echo -e "    ----------------------------------"
-  echo -e "   |\e[1;32m Silakan Pilih Jenis Domain di Bawah \e[0m|"
+  echo -e "   |\e[1;32mPlease Select a Domain Type Below \e[0m|"
   echo -e "    ----------------------------------"
-  echo -e "     \e[1;32m1)\e[0m Domain Anda Sendiri"
-  echo -e "     \e[1;32m2)\e[0m Domain Acak"
-  echo -e "   ------------------------------------"
-
-  # Membaca input dari pengguna
-  read -p "   Pilih angka 1-2 atau tombol lain (Domain Acak): " host
+  echo -e "     \e[1;32m1)\e[0m Your Domain"
+  echo -e "     \e[1;32m2)\e[0m Random Domain"
+  echo -e "    ----------------------------------"
+  read -p "   Please select numbers 1-2 or Any Button(Random): " host
   echo ""
-
+  
   if [[ $host == "1" ]]; then
     clear
-    echo ""
-    echo ""
     echo -e "   \e[1;36m_______________________________$NC"
-    echo -e "   \e[1;32m         GANTI DOMAIN $NC"
+    echo -e "   \e[1;32m      CHANGES DOMAIN $NC"
     echo -e "   \e[1;36m_______________________________$NC"
     echo -e ""
-
-    # Input domain pengguna
-    read -p "   Masukkan Domain Anda: " host1
-    echo -e "   \e[1;32mSilakan Masukkan Nama Anda $NC"
-    read -p "   Masukkan Nama User (12 Karakter): " nama
-
-    # Menyimpan domain dan nama
+    read -p "   INPUT YOUR DOMAIN:   " host1
+    if [[ -z "$host1" ]]; then
+      echo -e "\e[1;31mError: Domain cannot be empty!\e[0m"
+      exit 1
+    fi
+    read -p "   Enter User Script (12 Characters): " nama
+    mkdir -p /var/lib/kyt
     echo "IP=${host1}" >> /var/lib/kyt/ipvps.conf
-    echo "$host1" > /etc/xray/domain
-    echo "$host1" > /root/domain
-
-    # Memastikan nama tidak kosong
+    echo $host1 > /etc/xray/domain
+    echo $host1 > /root/domain
     if [[ -z "$nama" ]]; then
-      echo "SCLANS STORE VPN" > /etc/xray/username
+      echo "SKT TUNNELING" > /etc/xray/username
     else
-      echo "$nama" > /etc/xray/username
+      echo $nama > /etc/xray/username
     fi
     echo ""
-
   elif [[ $host == "2" ]]; then
-    # Menggunakan domain acak
-    wget "${REPO}Tytyd/cf.sh" -O cf.sh
-    chmod +x cf.sh
-    ./cf.sh
-    rm -f cf.sh
+    wget "${REPO}Sktools/cf.sh" && chmod +x cf.sh && ./cf.sh
+    rm -f /root/cf.sh
     clear
-
   else
-    # Jika input selain 1 atau 2, gunakan domain acak
-    echo -e "\e[1;33mMenggunakan Subdomain/Domain Acak...$NC"
+    echo -e "\e[1;33mRandom Subdomain/Domain is Used$NC"
     clear
   fi
 }
+
+
 
 clear
 
 # Restart the system
 restart_system() {
-  # Mengambil informasi pengguna dan izin
-  USRSC=$(wget -qO- "${izinsc}" | grep "${ipsaya}" | awk '{print $2}')
-  EXPSC=$(wget -qO- "${izinsc}" | grep "${ipsaya}" | awk '{print $3}')
-  TIMEZONE=$(date '+%H:%M:%S')
-
-  # Membuat pesan notifikasi
+  USRSC=$(wget -qO- ${izinsc} | grep $ipsaya | awk '{print $2}')
+  EXPSC=$(wget -qO- ${izinsc} | grep $ipsaya | awk '{print $3}')
+  TIMEZONE=$(printf '%(%H:%M:%S)T')
   TEXT="
-<code>────────────────────</code>
-<b> 🟢 NOTIFICATIONS INSTALL 🟢</b>
-<code>────────────────────</code>
-<code>Domain : </code><code>${domain}</code>
-<code>Date   : </code><code>${TIME}</code>
-<code>Time   : </code><code>${TIMEZONE}</code>
-<code>Ip vps : </code><code>${ipsaya}</code>
-<code>────────────────────</code>
-<i>Automatic Notification from Github</i>
-"
-
-  # Menambahkan tombol interaktif
-  BUTTONS='&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://t.me/BellaTrix_cs"},{"text":"Contact","url":"https://wa.me/2348084124966"}]]}'
-
-  # Mengirim notifikasi via Telegram
-  curl -s --max-time "${TIMES}" \
-       -d "chat_id=${CHATID}&disable_web_page_preview=1&text=${TEXT}&parse_mode=html" \
-       "${URL}" >/dev/null
+  <code>────────────────────</code>
+  <b> 🟢 NOTIFICATIONS INSTALL 🟢</b>
+  <code>────────────────────</code>
+  <code>ID     : </code><code>$USRSC</code>
+  <code>Domain : </code><code>$domain</code>
+  <code>Date   : </code><code>$TIME</code>
+  <code>Time   : </code><code>$TIMEZONE</code>
+  <code>Ip vps : </code><code>$ipsaya</code>
+  <code>Exp Sc : </code><code>$EXPSC</code>
+  <code>────────────────────</code>
+  <i>Automatic Notification from Github</i>
+  "'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://t.me/frkbrowser"},{"text":"Contact","url":"https://wa.me/2348084124966"}]]}'
+  curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
 }
 clear
+
 # Set up SSL
 function pasang_ssl() {
   clear
@@ -329,6 +329,7 @@ function make_folder_xray() {
   rm -rf /etc/vmess/.vmess.db
   rm -rf /etc/vless/.vless.db
   rm -rf /etc/trojan/.trojan.db
+
   rm -rf /etc/ssh/.ssh.db
   rm -rf /etc/bot/.bot.db
   mkdir -p /etc/bot
@@ -355,6 +356,7 @@ function make_folder_xray() {
   touch /etc/vmess/.vmess.db
   touch /etc/vless/.vless.db
   touch /etc/trojan/.trojan.db
+
   touch /etc/ssh/.ssh.db
   touch /etc/bot/.bot.db
   echo "& plughin Account" >>/etc/vmess/.vmess.db
@@ -667,11 +669,12 @@ function ins_Fail2ban() {
     mkdir /usr/local/ddos
   fi
   clear
-   echo "Banner /etc/skt-hiasan.txt" >>/etc/ssh/sshd_config
-  sed -i 's@DROPBEAR_BANNER=""@DROPBEAR_BANNER="/usr/bin/skt-hiasan.txt"@g' /etc/default/dropbear
-  wget -O /usr/bin/skt-hiasan.txt "${REPO}skt-hiasan.txt"
+  echo "Banner /etc/banner.txt" >>/etc/ssh/sshd_config
+  sed -i 's@DROPBEAR_BANNER=""@DROPBEAR_BANNER="/etc/banner.txt"@g' /etc/default/dropbear
+  wget -O /etc/banner.txt "${REPO}banner.txt"
   print_success "Fail2ban Installed"
 }
+
 
 # Install ePro WebSocket Proxy
 function ins_epro() {
@@ -770,7 +773,9 @@ EOF
 
   echo "Enabling udp-custom service"
   systemctl enable udp-custom &>/dev/null
-  print_success "UDP-CUSTOM BY SCLANS STORE VPN Installed"
+  print_success "UDP-CUSTOM BY SKT TUNNELING Installed"
+  clear
+}
 
 # Restart all services
 function ins_restart() {
@@ -796,6 +801,7 @@ function ins_restart() {
   systemctl enable --now ws
   systemctl enable --now fail2ban
   systemctl enable --now udp-custom
+  systemctl enable --now noobzvpns
   history -c
   echo "unset HISTFILE" >> /etc/profile
   cd
@@ -808,9 +814,9 @@ function ins_restart() {
 # Install menu packet
 function menu() {
   clear
-  print_install "Setting up Menu Packet"
-  wget ${REPO}Sktools/menu.zip
-  7z x -phelehasu menu.zip
+  print_install "Menginstall Service Menu"
+  wget ${REPO}Vpn/menu.zip
+  unzip menu.zip
   chmod +x menu/*
   mv menu/* /usr/local/sbin
   rm -rf menu
@@ -980,19 +986,31 @@ secs_to_human "$(($(date +%s) - ${start}))"
 sudo hostnamectl set-hostname $username
 clear
 echo -e ""
-# Menampilkan pesan sukses
-clear
-echo -e "\033[96m==========================\033[0m"
+#!/bin/bash
+
+# Tampilkan pesan sukses
+echo -e "\n\033[96m==========================\033[0m"
 echo -e "\033[92m      INSTALL SUCCESS      \033[0m"
-echo -e "\033[96m==========================\033[0m"
-echo
+echo -e "\033[96m==========================\033[0m\n"
 
-# Tunggu sebentar sebelum melakukan reboot otomatis
-echo "Rebooting in 5 seconds..."
-sleep 5
+# Tunggu sejenak dan bersihkan layar
+sleep 2 && clear
 
-# Melakukan reboot otomatis
-clear
-echo "Rebooting now..."
-reboot
+# Tampilkan pesan tunggu
+echo -e "\033[93;1mPlease Wait..\033[0m"
+sleep 1 && clear
+
+# Minta konfirmasi untuk reboot
+echo -e "\n\n\n"
+read -p "Input 'y' to reboot the system: " input
+
+# Cek input dan reboot jika 'y'
+if [[ "$input" == "y" || "$input" == "Y" ]]; then
+    echo "Rebooting the system..."
+    sleep 1
+    reboot
+else
+    echo "Reboot canceled."
+    exit 0
+fi
 
