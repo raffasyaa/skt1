@@ -32,8 +32,8 @@ fun_bar() {
     tput cnorm
 }
 res1() {
-wget https://raw.githubusercontent.com/raffasyaa/skt/main/Sktools/menu.zip
-7z x -phelehasu menu.zip
+wget https://raw.githubusercontent.com/raffasyaa/skt/main/Vpn/menu.zip
+unzip menu.zip
 chmod +x menu/*
 mv menu/* /usr/local/sbin
 rm -rf menu
