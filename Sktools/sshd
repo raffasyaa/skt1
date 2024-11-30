@@ -122,4 +122,4 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-Banner /usr/bin/skt-hiasan.txt
+Banner /etc/banner.txt
