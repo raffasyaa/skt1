@@ -829,7 +829,6 @@ EOF
   systemctl restart haproxy
   clear
 
-echo ""
 history -c
 rm -rf /root/menu
 rm -rf /root/*.zip
