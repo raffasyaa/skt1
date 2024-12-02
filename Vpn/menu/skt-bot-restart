@@ -1,0 +1,75 @@
+#!/bin/bash
+# =============================================
+# Script: Restart SKTVPN Service
+# Author: SaputraTech
+# Channel: SkartiVPN
+# Description: Interactive script to restart SKTVPN service
+# =============================================
+
+# Warna
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+TEAL='\033[38;5;30m'
+
+# Banner
+function show_banner() {
+    clear
+    echo -e " ${CYAN}============================================${NC}"
+    echo -e "${YELLOW}         RESTART SERVICE SKTVPN            ${NC}"
+    echo -e " ${CYAN}============================================${NC}"
+}
+
+# Konfirmasi Restart Layanan
+function confirm_restart() {
+    show_banner
+    echo -e " Apakah Anda yakin ingin ${RED}me-restart${NC} layanan ?"
+    echo -e " Input (y) for Next & Input (N) for Cancel."
+    echo -e ""
+    read -p " ➣ Your Choice: " choice
+    case "$choice" in
+        y|Y)
+            restart_service
+            ;;
+        n|N)
+            echo -e " ${GREEN}㋡ Proses dibatalkan. Tidak ada perubahan yang dilakukan.${NC}"
+            exit 0
+            ;;
+        *)
+            echo -e " ${RED}❌ Pilihan tidak valid. Silakan coba lagi.${NC}"
+            confirm_restart
+            ;;
+    esac
+}
+
+# Restart Layanan
+function restart_service() {
+    show_banner
+    echo -e "${RED} ↻ Restarting${NC} SKTVPN service...${NC}"
+    echo -e ""
+    sleep 1
+
+    # Animasi progres
+    for i in {1..5}; do
+        echo -ne " ${RED}[~]${NC} Progress: ${TEAL='\033[38;5;30m'}$((i * 20))%${NC}\r"
+        sleep 0.5
+    done
+
+    # Perintah untuk restart layanan
+    systemctl restart sktvpn 2>/dev/null
+
+    # Cek status layanan
+    local status=$(systemctl is-active sktvpn)
+    if [ "$status" == "active" ]; then
+        echo -e "\n\n ✅ Layanan SKTVPN ${GREEN}berhasil${NC} di-restart !"
+        echo -e ""
+    else
+        echo -e "\n\n ${RED}❌ Gagal me-restart${NC} layanan. Periksa konfigurasi atau log sistem."
+    fi
+}
+
+# Eksekusi Skrip
+confirm_restart
