@@ -117,7 +117,7 @@ chown www-data.www-data /var/log/xray
 chmod +x /var/log/xray
 touch /var/log/xray/access.log
 touch /var/log/xray/error.log
-mkdir -p /var/lib/kyt >/dev/null 2>&1
+mkdir -p /var/lib/phreakers >/dev/null 2>&1
 
 # Set memory usage variables
 while IFS=":" read -r a b; do
@@ -220,8 +220,8 @@ export IP=$(curl -s https://ipinfo.io/ip/)
       exit 1
     fi
     read -p "   Enter User Script (12 Characters): " nama
-    mkdir -p /var/lib/kyt
-    echo "IP=${host1}" >> /var/lib/kyt/ipvps.conf
+    mkdir -p /var/lib/phreakers
+    echo "IP=${host1}" >> /var/lib/phreakers/ipvps.conf
     echo $host1 > /etc/xray/domain
     echo $host1 > /root/domain
     if [[ -z "$nama" ]]; then
@@ -295,10 +295,10 @@ clear
   mkdir -p /usr/bin/xray/
   mkdir -p /var/log/xray/
   mkdir -p /var/www/html
-  mkdir -p /etc/kyt/limit/vmess/ip
-  mkdir -p /etc/kyt/limit/vless/ip
-  mkdir -p /etc/kyt/limit/trojan/ip
-  mkdir -p /etc/kyt/limit/ssh/ip
+  mkdir -p /etc/phreakers/limit/vmess/ip
+  mkdir -p /etc/phreakers/limit/vless/ip
+  mkdir -p /etc/phreakers/limit/trojan/ip
+  mkdir -p /etc/phreakers/limit/ssh/ip
   mkdir -p /etc/limit/vmess
   mkdir -p /etc/limit/vless
   mkdir -p /etc/limit/trojan
@@ -453,9 +453,9 @@ Restart=always
 WantedBy=multi-user.target
 EOF
   systemctl daemon-reload
-  mkdir -p /usr/local/kyt/
-  wget -q -O /usr/local/kyt/udp-mini "${REPO}Sktools/udp-mini"
-  chmod +x /usr/local/kyt/udp-mini
+  mkdir -p /usr/local/phreakers/
+  wget -q -O /usr/local/phreakers/udp-mini "${REPO}Sktools/udp-mini"
+  chmod +x /usr/local/phreakers/udp-mini
   wget -q -O /etc/systemd/system/udp-mini-1.service "${REPO}Sktools/udp-mini-1.service"
   wget -q -O /etc/systemd/system/udp-mini-2.service "${REPO}Sktools/udp-mini-2.service"
   wget -q -O /etc/systemd/system/udp-mini-3.service "${REPO}Sktools/udp-mini-3.service"
