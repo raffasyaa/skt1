@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# Install necessary packages
-apt install -y
-apt upgrade -y
-apt update -y
-apt install curl -y
-apt install wondershaper -y
-apt install lolcat -y
-gem install lolcat
-
 # Define color variables for output
 Green="\e[92;1m"
 RED="\033[1;31m"
@@ -23,6 +14,17 @@ GRAY="\e[1;30m"
 NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+PINK='\033[0;35m'
+INDIGO='\033[38;5;54m'
+CYAN_BG='\033[46;1;97m'
+TEAL='\033[38;5;30m'
+ORANGE='\033[38;5;208m'
+BLUELIGHT='\033[38;5;117m'
+PURPLE='\033[0;35m'
+
+# SETUP BOT TELEGRAM
 TIME=$(date '+%d %b %Y')
 ipsaya=$(wget -qO- ipinfo.io/ip)
 TIMES="10"
@@ -30,46 +32,40 @@ CHATID="6963467198"
 KEY="7660539264:AAEFVAHnxB4OI2Xol1ovVDMJ4r2h1NVW468"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 
+# Install necessary packages
+apt install -y
+apt upgrade -y
+apt update -y
+apt install curl -y
+apt install wondershaper -y
+apt install lolcat -y
+gem install lolcat
+
 # Clear screen and set IP address
-clear
 export IP=$(curl -sS icanhazip.com)
 clear
 
-# Display welcome message
-echo -e "${YELLOW}----------------------------------------------------------${NC}"
-echo -e "\033[96;1m              SCLANS AUTOSCRIPT                      \033[0m"
-echo -e "${YELLOW}----------------------------------------------------------${NC}"
-echo ""
-sleep 1
-
-# Check system architecture
-if [[ $(uname -m | awk '{print $1}') == "x86_64" ]]; then
-  echo -e "${OK} Your Architecture Is Supported ( ${green}$(uname -m)${NC} )"
-else
-  echo -e "${EROR} Your Architecture Is Not Supported ( ${YELLOW}$(uname -m)${NC} )"
-  exit 1
-fi
-
-# Check OS type
-if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
-  echo -e "${OK} Your OS Is Supported ( ${green}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC} )"
-elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
-  echo -e "${OK} Your OS Is Supported ( ${green}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC} )"
-else
-  echo -e "${EROR} Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${NC} )"
-  exit 1
-fi
-
-# Check IP address
-if [[ $ipsaya == "" ]]; then
-  echo -e "${EROR} IP Address ( ${RED}Not Detected${NC} )"
-else
-  echo -e "${OK} IP Address ( ${green}$IP${NC} )"
-fi
-echo ""
-read -p "$(echo -e "Press ${GRAY}[ ${NC}${green}Enter${NC} ${GRAY}]${NC} For Starting Installation") "
-echo ""
+#Preparation
+#install dependient template bot
 clear
+cd;
+echo -e "${RED}
+██████╗░██╗░░░░░███████╗░█████╗░░██████╗███████╗
+██╔══██╗██║░░░░░██╔════╝██╔══██╗██╔════╝██╔════╝
+██████╔╝██║░░░░░█████╗░░███████║╚█████╗░█████╗░░${NC}${BLUELIGHT}
+██╔═══╝░██║░░░░░██╔══╝░░██╔══██║░╚═══██╗██╔══╝░░
+██║░░░░░███████╗███████╗██║░░██║██████╔╝███████╗
+╚═╝░░░░░╚══════╝╚══════╝╚═╝░░╚═╝╚═════╝░╚══════╝
+${NC}"
+echo -e "${BLUELIGHT}
+░██╗░░░░░░░██╗░█████╗░██╗████████╗░░░░░░░░░░░░░░░
+░██║░░██╗░░██║██╔══██╗██║╚══██╔══╝░░░░░░░░░░░░░░░
+░╚██╗████╗██╔╝███████║██║░░░██║░░░░░░░░░░░░░░░░░░${NC}${RED}
+░░████╔═████║░██╔══██║██║░░░██║░░░░░░░░░░░░░░░░░░
+░░╚██╔╝░╚██╔╝░██║░░██║██║░░░██║░░░${NC}${RED}██╗██╗██╗██╗██╗${NC}
+${BLUELIGHT}░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝╚═╝░░░╚═╝░░░${NC}${RED}╚═╝╚═╝╚═╝╚═╝╚═╝
+${NC}"
+sleep 1
 
 # Check if the script is run as root
 if [ "${EUID}" -ne 0 ]; then
@@ -94,24 +90,17 @@ MYIP=$(curl -sS ipv4.icanhazip.com)
 echo -e "\e[32mloading...\e[0m"
 clear
 
-clear
 REPO="https://raw.githubusercontent.com/raffasyaa/skt/main/"
 start=$(date +%s)
+
 secs_to_human() {
   echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minute's $((${1} % 60)) seconds"
 }
+
 function print_ok() {
   echo -e "${OK} ${BLUE} $1 ${FONT}"
 }
-function print_install() {
-  echo -e "${green} =============================== ${FONT}"
-  echo -e "${YELLOW} # $1 ${FONT}"
-  echo -e "${green} =============================== ${FONT}"
-  sleep 1
-}
-function print_error() {
-  echo -e "${ERROR} ${REDBG} $1 ${FONT}"
-}
+
 function print_success() {
   if [[ 0 -eq $? ]]; then
     echo -e "${green} =============================== ${FONT}"
@@ -120,13 +109,13 @@ function print_success() {
     sleep 2
   fi
 }
-function is_root() {
+
   if [[ 0 == "$UID" ]]; then
     print_ok "Root user Start installation process"
   else
     print_error "The current user is not the root user, please switch to the root user and run the script again"
   fi
-}
+
 
 # Create xray directory
 print_install "Creating xray directory"
@@ -160,7 +149,6 @@ export Arch=$(uname -m)
 export IP=$(curl -s https://ipinfo.io/ip/)
 
 # Set up initial configurations
-function first_setup() {
   timedatectl set-timezone Asia/Jakarta
   echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
   echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
@@ -181,11 +169,9 @@ function first_setup() {
     echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g'))"
     exit 1
   fi
-}
-clear
+  clear
 
 # Install nginx
-function nginx_install() {
   if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
     print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
     sudo apt-get install nginx -y
@@ -195,11 +181,9 @@ function nginx_install() {
   else
     echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
   fi
-}
+
 
 # Install required packages
-function base_package() {
-  clear
   print_install "Installing Required Packages"
   apt install at -y
   apt install zip pwgen openssl netcat socat cron bash-completion -y
@@ -226,14 +210,9 @@ function base_package() {
   echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
   sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
   print_success "Required Packages Installed"
-}
-clear
-
-# Define color variables
-NC='\e[0m'
+  clear
 
 # Function to configure domain
-function pasang_domain() {
   clear
   echo -e "    ----------------------------------"
   echo -e "   |\e[1;32mPlease Select a Domain Type Below \e[0m|"
@@ -274,14 +253,13 @@ function pasang_domain() {
     echo -e "\e[1;33mRandom Subdomain/Domain is Used$NC"
     clear
   fi
-}
+
 
 
 
 clear
 
 # Restart the system
-restart_system() {
   USRSC=$(wget -qO- ${izinsc} | grep $ipsaya | awk '{print $2}')
   EXPSC=$(wget -qO- ${izinsc} | grep $ipsaya | awk '{print $3}')
   TIMEZONE=$(printf '%(%H:%M:%S)T')
@@ -289,22 +267,17 @@ restart_system() {
   <code>────────────────────</code>
   <b> 🟢 NOTIFICATIONS INSTALL 🟢</b>
   <code>────────────────────</code>
-  <code>ID     : </code><code>$USRSC</code>
+  <code>Ip vps : </code><code>$ipsaya</code>
   <code>Domain : </code><code>$domain</code>
   <code>Date   : </code><code>$TIME</code>
   <code>Time   : </code><code>$TIMEZONE</code>
-  <code>Ip vps : </code><code>$ipsaya</code>
-  <code>Exp Sc : </code><code>$EXPSC</code>
   <code>────────────────────</code>
   <i>Automatic Notification from Github</i>
-  "'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://t.me/frkbrowser"},{"text":"Contact","url":"https://wa.me/2348084124966"}]]}'
+  "'&reply_markup={"inline_keyboard":[[{"text":"Admin","url":"https://t.me/SaputraTech"},{"text":"Contact","url":"https://wa.me/6293845974466"}]]}'
   curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
-}
-clear
+  clear
 
 # Set up SSL
-function pasang_ssl() {
-  clear
   print_install "Setting up SSL for Domain"
   rm -rf /etc/xray/xray.key
   rm -rf /etc/xray/xray.crt
@@ -322,10 +295,8 @@ function pasang_ssl() {
   ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
   chmod 777 /etc/xray/xray.key
   print_success "SSL Certificate"
-}
 
 # Create directories for xray
-function make_folder_xray() {
   rm -rf /etc/vmess/.vmess.db
   rm -rf /etc/vless/.vless.db
   rm -rf /etc/trojan/.trojan.db
@@ -363,10 +334,8 @@ function make_folder_xray() {
   echo "& plughin Account" >>/etc/vless/.vless.db
   echo "& plughin Account" >>/etc/trojan/.trojan.db
   echo "& plughin Account" >>/etc/ssh/.ssh.db
-}
 
 # Install xray
-function install_xray() {
   clear
   print_install "Installing Xray Core 1.8.1 Latest Version"
   domainSock_dir="/run/xray"; ! [ -d $domainSock_dir ] && mkdir $domainSock_dir
@@ -408,10 +377,8 @@ filesNOFILE=1000000
 WantedBy=multi-user.target
 EOF
   print_success "Configuration Packet Installed"
-}
 
 # Set up SSH password
-function ssh() {
   clear
   print_install "Setting up SSH Password"
   wget -O /etc/pam.d/common-password "${REPO}Sktools/password"
@@ -461,10 +428,9 @@ END
   ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
   sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
   print_success "SSH Password Set"
-}
+
 
 # Set up UDP limit
-function udp_mini() {
   clear
   print_install "Setting up Service Limit Quota"
   wget raw.githubusercontent.com/raffasyaa/skt/main/Sktools/limit.sh && chmod +x limit.sh && ./limit.sh
@@ -530,10 +496,9 @@ EOF
   systemctl enable udp-mini-3
   systemctl start udp-mini-3
   print_success "Quota Service Files"
-}
+
 
 # Set up SlowDNS Server
-function ssh_slow() {
   clear
   print_install "Setting up SlowDNS Server"
   wget -q -O /tmp/nameserver "${REPO}Sktools/nameserver" >/dev/null 2>&1
@@ -541,11 +506,9 @@ function ssh_slow() {
   bash /tmp/nameserver | tee /root/install.log
   clear
   print_success "SlowDNS Installed"
-}
 clear
 
 # Install SSHD
-function ins_SSHD() {
   clear
   print_install "Setting up SSHD"
   wget -q -O /etc/ssh/sshd_config "${REPO}Sktools/sshd" >/dev/null 2>&1
@@ -554,25 +517,21 @@ function ins_SSHD() {
   systemctl restart ssh
   /etc/init.d/ssh status
   print_success "SSHD Installed"
-}
 clear
 
 # Install Dropbear
-function ins_dropbear() {
   clear
-  print_install "Setting up Dropbear"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}Mengunduh Service Dropbear...${NC}"
   apt-get install dropbear -y > /dev/null 2>&1
   wget -q -O /etc/default/dropbear "${REPO}Sktools/dropbear.conf"
   chmod +x /etc/default/dropbear
   /etc/init.d/dropbear restart
   /etc/init.d/dropbear status
   print_success "Dropbear Installed"
-}
-clear
+  clear
 
 # Install Vnstat
-function ins_vnstat() {
-  clear
   print_install "Setting up Vnstat"
   apt -y install vnstat > /dev/null 2>&1
   /etc/init.d/vnstat restart
@@ -591,55 +550,17 @@ function ins_vnstat() {
   rm -f /root/vnstat-2.6.tar.gz
   rm -rf /root/vnstat-2.6
   print_success "Vnstat Installed"
-}
+
 
 # Install OpenVPN
-function ins_openvpn() {
   clear
   print_install "Setting up OpenVPN"
   wget ${REPO}Sktools/openvpn && chmod +x openvpn && ./openvpn
   /etc/init.d/openvpn restart
   print_success "OpenVPN Installed"
-}
 
-# Set up backup server
-function ins_backup() {
-  clear
-  print_install "Setting up Backup Server"
-  apt install rclone -y
-  printf "q\n" | rclone config
-  wget -O /root/.config/rclone/rclone.conf "${REPO}Sktools/rclone.conf"
-  cd /bin
-  git clone https://github.com/LunaticBackend/wondershaper.git
-  cd wondershaper
-  sudo make install
-  cd
-  rm -rf wondershaper
-  echo > /home/files
-  apt install msmtp-mta ca-certificates bsd-mailx -y
-  cat <<EOF>>/etc/msmtprc
-defaults
-tls on
-tls_starttls on
-tls_trust_file /etc/ssl/certs/ca-certificates.crt
-account default
-host smtp.gmail.com
-port 587
-auth on
-user sclansscript@gmail.com
-from sclansscript@gmail.com
-password Farukktn
-logfile ~/.msmtp.log
-EOF
-  chown -R www-data:www-data /etc/msmtprc
-  wget -q -O /etc/ipserver "${REPO}Sktools/ipserver" && bash /etc/ipserver
-  print_success "Backup Server Installed"
-}
-clear
 
 # Set up swap
-function ins_swab() {
-  clear
   print_install "Setting up 1GB Swap"
   gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
   gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
@@ -656,10 +577,8 @@ function ins_swab() {
   chronyc tracking -v
   wget ${REPO}Sktools/bbr.sh && chmod +x bbr.sh && ./bbr.sh
   print_success "1GB Swap Installed"
-}
 
 # Install Fail2ban
-function ins_Fail2ban() {
   clear
   print_install "Setting up Fail2ban"
   if [ -d '/usr/local/ddos' ]; then
@@ -673,13 +592,11 @@ function ins_Fail2ban() {
   sed -i 's@DROPBEAR_BANNER=""@DROPBEAR_BANNER="/etc/banner.txt"@g' /etc/default/dropbear
   wget -O /etc/banner.txt "${REPO}banner.txt"
   print_success "Fail2ban Installed"
-}
 
 
 # Install ePro WebSocket Proxy
-function ins_epro() {
   clear
-  print_install "Setting up ePro WebSocket Proxy"
+  print_install "Setting WebSocket Proxy"
   wget -O /usr/bin/ws "${REPO}Sktools/ws" >/dev/null 2>&1
   wget -O /usr/bin/tun.conf "${REPO}Sktools/tun.conf" >/dev/null 2>&1
   wget -O /etc/systemd/system/ws.service "${REPO}Sktools/ws.service" >/dev/null 2>&1
@@ -775,10 +692,9 @@ EOF
   systemctl enable udp-custom &>/dev/null
   print_success "UDP-CUSTOM BY SKT TUNNELING Installed"
   clear
-}
+
 
 # Restart all services
-function ins_restart() {
   clear
   print_install "Restarting All Services"
   /etc/init.d/nginx restart
@@ -809,10 +725,8 @@ function ins_restart() {
   rm -f /root/key.pem
   rm -f /root/cert.pem
   print_success "All Services Restarted"
-}
 
 # Install menu packet
-function menu() {
   clear
   print_install "Menginstall Service Menu"
   wget ${REPO}Vpn/menu.zip
@@ -821,10 +735,9 @@ function menu() {
   mv menu/* /usr/local/sbin
   rm -rf menu
   rm -rf menu.zip
-}
+
 
 # Configure user profile
-function profile() {
   clear
   cat >/root/.profile <<EOF
 if [ "$BASH" ]; then
@@ -925,10 +838,8 @@ EOF
     TIME_DATE="AM"
   fi
   print_success "Menu Packet Set Up"
-}
 
 # Enable all services
-function enable_services() {
   clear
   print_install "Enabling Services"
   systemctl daemon-reload
@@ -942,37 +853,6 @@ function enable_services() {
   systemctl restart haproxy
   print_success "Services Enabled"
   clear
-}
-
-# Main installation function
-function instal() {
-  clear
-  first_setup
-  nginx_install
-  base_package
-  make_folder_xray
-  pasang_domain
-  password_default
-  pasang_ssl
-  install_xray
-  ssh
-  udp_mini
-  ssh_slow
-  ins_SSHD
-  ins_dropbear
-  ins_vnstat
-  ins_openvpn
-  ins_backup
-  ins_swab
-  ins_Fail2ban
-  ins_epro
-  ins_restart
-  menu
-  profile
-  enable_services
-  restart_system
-}
-instal
 
 echo ""
 history -c
@@ -986,11 +866,10 @@ secs_to_human "$(($(date +%s) - ${start}))"
 sudo hostnamectl set-hostname $username
 clear
 echo -e ""
-#!/bin/bash
 
 # Tampilkan pesan sukses
 echo -e "\n\033[96m==========================\033[0m"
-echo -e "\033[92m      INSTALL SUCCESS      \033[0m"
+echo -e "\033[92m     INSTALL SCRIPT SUCCESS      \033[0m"
 echo -e "\033[96m==========================\033[0m\n"
 
 # Tunggu sejenak dan bersihkan layar
@@ -1001,7 +880,7 @@ echo -e "\033[93;1mPlease Wait..\033[0m"
 sleep 1 && clear
 
 # Minta konfirmasi untuk reboot
-echo -e "\n\n\n"
+echo -e ""
 read -p "Input 'y' to reboot the system: " input
 
 # Cek input dan reboot jika 'y'
