@@ -101,15 +101,6 @@ function print_ok() {
   echo -e "${OK} ${BLUE} $1 ${FONT}"
 }
 
-function print_success() {
-  if [[ 0 -eq $? ]]; then
-    echo -e "${green} =============================== ${FONT}"
-    echo -e "${Green} # $1 installed successfully"
-    echo -e "${green} =============================== ${FONT}"
-    sleep 2
-  fi
-}
-
   if [[ 0 == "$UID" ]]; then
     print_ok "Root user Start installation process"
   else
@@ -118,7 +109,6 @@ function print_success() {
 
 
 # Create xray directory
-print_install "Creating xray directory"
 mkdir -p /etc/xray
 curl -s ifconfig.me > /etc/xray/ipvps
 touch /etc/xray/domain
@@ -152,7 +142,6 @@ export IP=$(curl -s https://ipinfo.io/ip/)
   timedatectl set-timezone Asia/Jakarta
   echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
   echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-  print_success "Directory Xray"
   if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
     echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
     sudo apt update -y
@@ -173,18 +162,15 @@ export IP=$(curl -s https://ipinfo.io/ip/)
 
 # Install nginx
   if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
-    print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    sudo apt-get install nginx -y
+       sudo apt-get install nginx -y
   elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
-    print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    apt -y install nginx
+      apt -y install nginx
   else
     echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
   fi
 
 
 # Install required packages
-  print_install "Installing Required Packages"
   apt install at -y
   apt install zip pwgen openssl netcat socat cron bash-completion -y
   apt install figlet -y
@@ -209,7 +195,6 @@ export IP=$(curl -s https://ipinfo.io/ip/)
   echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
   echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
   sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
-  print_success "Required Packages Installed"
   clear
 
 # Function to configure domain
@@ -278,7 +263,6 @@ clear
   clear
 
 # Set up SSL
-  print_install "Setting up SSL for Domain"
   rm -rf /etc/xray/xray.key
   rm -rf /etc/xray/xray.crt
   domain=$(cat /root/domain)
@@ -294,7 +278,6 @@ clear
   /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
   ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
   chmod 777 /etc/xray/xray.key
-  print_success "SSL Certificate"
 
 # Create directories for xray
   rm -rf /etc/vmess/.vmess.db
@@ -327,7 +310,6 @@ clear
   touch /etc/vmess/.vmess.db
   touch /etc/vless/.vless.db
   touch /etc/trojan/.trojan.db
-
   touch /etc/ssh/.ssh.db
   touch /etc/bot/.bot.db
   echo "& plughin Account" >>/etc/vmess/.vmess.db
@@ -337,7 +319,6 @@ clear
 
 # Install xray
   clear
-  print_install "Installing Xray Core 1.8.1 Latest Version"
   domainSock_dir="/run/xray"; ! [ -d $domainSock_dir ] && mkdir $domainSock_dir
   chown www-data.www-data $domainSock_dir
   latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
@@ -346,11 +327,10 @@ clear
   wget -O /etc/systemd/system/runn.service "${REPO}Sktools/runn.service" >/dev/null 2>&1
   domain=$(cat /etc/xray/domain)
   IPVS=$(cat /etc/xray/ipvps)
-  print_success "Xray Core 1.8.1 Latest Version Installed"
   clear
   curl -s ipinfo.io/city >>/etc/xray/city
   curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
-  print_install "Installing Configuration Packet"
+
   wget -O /etc/haproxy/haproxy.cfg "${REPO}Sktools/haproxy.cfg" >/dev/null 2>&1
   wget -O /etc/nginx/conf.d/xray.conf "${REPO}Sktools/xray.conf" >/dev/null 2>&1
   sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
@@ -376,11 +356,9 @@ filesNOFILE=1000000
 [Install]
 WantedBy=multi-user.target
 EOF
-  print_success "Configuration Packet Installed"
 
 # Set up SSH password
   clear
-  print_install "Setting up SSH Password"
   wget -O /etc/pam.d/common-password "${REPO}Sktools/password"
   chmod +x /etc/pam.d/common-password
   DEBIAN_FRONTEND=noninteractive dpkg-reconfigure keyboard-configuration
@@ -427,12 +405,10 @@ END
   sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
   ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
   sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
-  print_success "SSH Password Set"
 
 
 # Set up UDP limit
   clear
-  print_install "Setting up Service Limit Quota"
   wget raw.githubusercontent.com/raffasyaa/skt/main/Sktools/limit.sh && chmod +x limit.sh && ./limit.sh
   cd
   wget -q -O /usr/bin/limit-ip "${REPO}Sktools/limit-ip"
@@ -495,44 +471,33 @@ EOF
   systemctl stop udp-mini-3
   systemctl enable udp-mini-3
   systemctl start udp-mini-3
-  print_success "Quota Service Files"
 
 
 # Set up SlowDNS Server
-  clear
-  print_install "Setting up SlowDNS Server"
   wget -q -O /tmp/nameserver "${REPO}Sktools/nameserver" >/dev/null 2>&1
   chmod +x /tmp/nameserver
   bash /tmp/nameserver | tee /root/install.log
   clear
-  print_success "SlowDNS Installed"
 clear
 
 # Install SSHD
   clear
-  print_install "Setting up SSHD"
   wget -q -O /etc/ssh/sshd_config "${REPO}Sktools/sshd" >/dev/null 2>&1
   chmod 700 /etc/ssh/sshd_config
   /etc/init.d/ssh restart
   systemctl restart ssh
   /etc/init.d/ssh status
-  print_success "SSHD Installed"
-clear
+  clear
 
 # Install Dropbear
-  clear
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}Mengunduh Service Dropbear...${NC}"
   apt-get install dropbear -y > /dev/null 2>&1
   wget -q -O /etc/default/dropbear "${REPO}Sktools/dropbear.conf"
   chmod +x /etc/default/dropbear
   /etc/init.d/dropbear restart
   /etc/init.d/dropbear status
-  print_success "Dropbear Installed"
   clear
 
 # Install Vnstat
-  print_install "Setting up Vnstat"
   apt -y install vnstat > /dev/null 2>&1
   /etc/init.d/vnstat restart
   apt -y install libsqlite3-dev > /dev/null 2>&1
@@ -549,19 +514,45 @@ echo -e "${GREEN}Mengunduh Service Dropbear...${NC}"
   /etc/init.d/vnstat status
   rm -f /root/vnstat-2.6.tar.gz
   rm -rf /root/vnstat-2.6
-  print_success "Vnstat Installed"
 
 
 # Install OpenVPN
   clear
-  print_install "Setting up OpenVPN"
   wget ${REPO}Sktools/openvpn && chmod +x openvpn && ./openvpn
   /etc/init.d/openvpn restart
-  print_success "OpenVPN Installed"
 
+# Set up backup server
+  clear
+  apt install rclone -y
+  printf "q\n" | rclone config
+  wget -O /root/.config/rclone/rclone.conf "${REPO}Cfg/rclone.conf"
+  cd /bin
+  git clone https://github.com/LunaticBackend/wondershaper.git
+  cd wondershaper
+  sudo make install
+  cd
+  rm -rf wondershaper
+  echo > /home/files
+  apt install msmtp-mta ca-certificates bsd-mailx -y
+  cat <<EOF>>/etc/msmtprc
+defaults
+tls on
+tls_starttls on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+account default
+host smtp.gmail.com
+port 587
+auth on
+user sclansscript@gmail.com
+from sclansscript@gmail.com
+password Farukktn
+logfile ~/.msmtp.log
+EOF
+  chown -R www-data:www-data /etc/msmtprc
+  wget -q -O /etc/ipserver "${REPO}Sktools/ipserver" && bash /etc/ipserver
+  clear
 
 # Set up swap
-  print_install "Setting up 1GB Swap"
   gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
   gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
   curl -sL "$gotop_link" -o /tmp/gotop.deb
@@ -576,11 +567,9 @@ echo -e "${GREEN}Mengunduh Service Dropbear...${NC}"
   chronyc sourcestats -v
   chronyc tracking -v
   wget ${REPO}Sktools/bbr.sh && chmod +x bbr.sh && ./bbr.sh
-  print_success "1GB Swap Installed"
 
 # Install Fail2ban
   clear
-  print_install "Setting up Fail2ban"
   if [ -d '/usr/local/ddos' ]; then
     echo; echo; echo "Please un-install the previous version first"
     exit 0
@@ -591,12 +580,10 @@ echo -e "${GREEN}Mengunduh Service Dropbear...${NC}"
   echo "Banner /etc/banner.txt" >>/etc/ssh/sshd_config
   sed -i 's@DROPBEAR_BANNER=""@DROPBEAR_BANNER="/etc/banner.txt"@g' /etc/default/dropbear
   wget -O /etc/banner.txt "${REPO}banner.txt"
-  print_success "Fail2ban Installed"
 
 
 # Install ePro WebSocket Proxy
   clear
-  print_install "Setting WebSocket Proxy"
   wget -O /usr/bin/ws "${REPO}Sktools/ws" >/dev/null 2>&1
   wget -O /usr/bin/tun.conf "${REPO}Sktools/tun.conf" >/dev/null 2>&1
   wget -O /etc/systemd/system/ws.service "${REPO}Sktools/ws.service" >/dev/null 2>&1
@@ -630,10 +617,8 @@ echo -e "${GREEN}Mengunduh Service Dropbear...${NC}"
   cd
   apt autoclean -y >/dev/null 2>&1
   apt autoremove -y >/dev/null 2>&1
-  print_success "ePro WebSocket Proxy Installed"
-
   clear
-  print_install "Installing UDP-CUSTOM"
+
   cd
   rm -rf /root/udp
   mkdir -p /root/udp
@@ -687,16 +672,13 @@ EOF
 
   echo "Starting udp-custom service"
   systemctl start udp-custom &>/dev/null
-
   echo "Enabling udp-custom service"
   systemctl enable udp-custom &>/dev/null
-  print_success "UDP-CUSTOM BY SKT TUNNELING Installed"
   clear
 
 
 # Restart all services
   clear
-  print_install "Restarting All Services"
   /etc/init.d/nginx restart
   /etc/init.d/openvpn restart
   /etc/init.d/ssh restart
@@ -717,18 +699,15 @@ EOF
   systemctl enable --now ws
   systemctl enable --now fail2ban
   systemctl enable --now udp-custom
-  systemctl enable --now noobzvpns
   history -c
   echo "unset HISTFILE" >> /etc/profile
   cd
   rm -f /root/openvpn
   rm -f /root/key.pem
   rm -f /root/cert.pem
-  print_success "All Services Restarted"
 
 # Install menu packet
   clear
-  print_install "Menginstall Service Menu"
   wget ${REPO}Vpn/menu.zip
   unzip menu.zip
   chmod +x menu/*
@@ -837,11 +816,8 @@ EOF
   else
     TIME_DATE="AM"
   fi
-  print_success "Menu Packet Set Up"
 
 # Enable all services
-  clear
-  print_install "Enabling Services"
   systemctl daemon-reload
   systemctl start netfilter-persistent
   systemctl enable --now rc-local
@@ -851,7 +827,6 @@ EOF
   systemctl restart xray
   systemctl restart cron
   systemctl restart haproxy
-  print_success "Services Enabled"
   clear
 
 echo ""
@@ -871,25 +846,12 @@ echo -e ""
 echo -e "\n\033[96m==========================\033[0m"
 echo -e "\033[92m     INSTALL SCRIPT SUCCESS      \033[0m"
 echo -e "\033[96m==========================\033[0m\n"
-
-# Tunggu sejenak dan bersihkan layar
-sleep 2 && clear
-
-# Tampilkan pesan tunggu
-echo -e "\033[93;1mPlease Wait..\033[0m"
-sleep 1 && clear
-
-# Minta konfirmasi untuk reboot
-echo -e ""
-read -p "Input 'y' to reboot the system: " input
-
-# Cek input dan reboot jika 'y'
-if [[ "$input" == "y" || "$input" == "Y" ]]; then
-    echo "Rebooting the system..."
-    sleep 1
-    reboot
+sleep 1
+echo -e "[\e[1;31mWARNING\e[0m]➽ Reboot dulu yuk sayang biar gk error, (y/n)? "
+read answer
+if [ "$answer" == "${answer#[Yy]}" ] ;then
+exit 0
 else
-    echo "Reboot canceled."
-    exit 0
+cat /dev/null > ~/.bash_history && history -c && reboot
 fi
 
