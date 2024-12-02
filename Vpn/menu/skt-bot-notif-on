@@ -1,0 +1,72 @@
+#!/bin/bash
+clear
+
+# Warna dan gaya
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[1;34m'
+CYAN='\033[1;36m'
+PURPLE='\033[1;35m'
+WHITE='\033[1;37m'
+BOLD='\033[1m'
+TEAL='\033[38;5;30m'
+NC='\033[0m' # No Color
+
+# Variabel lainnya
+nama=$(cat /etc/xray/username 2>/dev/null || echo "User")
+
+# Fungsi utama
+function main() {
+  echo -e " ${BLUE}══════════════════════════════════════════${NC}"
+  echo -e " ${YELLOW}      ❐ TAMBAHKAN BOT NOTIFIKASI ❐${NC}"
+  echo -e " ${BLUE}══════════════════════════════════════════${NC}"
+
+  echo -e "${WHITE}"
+  read -rp " [~] Masukkan Token Bot   : " bottoken
+  read -rp " [~] Masukkan ID Telegram : " admin
+  echo -e "${NC}"
+  clear
+
+  echo -e " ${BLUE}══════════════════════════════════════════${NC}"
+  echo -e " ${YELLOW}        ❐ Sedang Memproses ❐${NC}"
+  echo -e " ${BLUE}══════════════════════════════════════════${NC}"
+  echo -e ""
+
+  # Animasi loading
+  for i in {1..5}; do
+    echo -ne " ${GREEN}[~]${NC} Progress: ${TEAL}$((i * 20))%${NC} "
+
+    # Menambahkan animasi titik yang bergerak
+    for j in {1..3}; do
+        echo -ne "."
+        sleep 0.5
+    done
+    echo -ne "\r"
+  done
+
+ # Menampilkan pesan selesai setelah animasi
+  clear
+  echo -e " ${GREEN}[+]${NC}${TEAL} Task Completed!${NC}"
+  echo -e ""
+
+  # Simpan token dan ID admin
+  mkdir -p /etc/bot
+  echo "${bottoken}" > "/etc/bot/${bottoken}"
+
+  # Perbarui database
+  if grep -q "^#bot# ${bottoken}" /etc/bot/.bot.db 2>/dev/null; then
+    sed -i "/^#bot# ${bottoken}/d" /etc/bot/.bot.db
+  fi
+  echo "#bot# ${bottoken} ${admin}" >> /etc/bot/.bot.db
+
+  # Tampilkan hasil
+  echo -e " ${BLUE}══════════════════════════════════════════${NC}"
+  echo -e " ${WHITE}❐ Add BOT${NC}     : ${GREEN}Completed Successfully${NC}"
+  echo -e " ${WHITE}❐ Token Bot${NC}   : ${CYAN}${bottoken}${NC}"
+  echo -e " ${WHITE}❐ ID Telegram${NC} : ${CYAN}${admin}${NC}"
+  echo -e " ${BLUE}══════════════════════════════════════════${NC}"
+}
+
+# Eksekusi fungsi utama
+main

@@ -1,0 +1,75 @@
+#!/bin/bash
+# =============================================
+# Script: Stop SKTVPN Service
+# Author: SaputraTech
+# Channel: SkartiVPN
+# Description: Interactive script to stop SKTVPN service
+# =============================================
+
+# Warna
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+WHITE='\033[1;37m'
+TEAL='\033[38;5;30m'
+
+# Banner
+function show_banner() {
+    clear
+    echo -e " ${CYAN}============================================${NC}"
+    echo -e " ${YELLOW}           STOP SERVICE SKTVPN            ${NC}"
+    echo -e " ${CYAN}============================================${NC}"
+}
+
+# Konfirmasi Hentikan Layanan
+function confirm_stop() {
+    show_banner
+    echo -e " Apakah Anda yakin ingin ${RED}menghentikan${NC} layanan ?"
+    echo -e " Input (y) for Next & Input (N) for Cancel."
+    echo -e ""
+    read -p " ➣ Your Choice: " choice
+    case "$choice" in
+        y|Y)
+            stop_service
+            ;;
+        n|N)
+            echo -e " ${GREEN}㋡ Proses dibatalkan. Tidak ada perubahan yang dilakukan.${NC}"
+            exit 0
+            ;;
+        *)
+            echo -e " ${RED}❌ Pilihan tidak valid. Silakan coba lagi.${NC}"
+            confirm_stop
+            ;;
+    esac
+}
+
+# Hentikan Layanan
+function stop_service() {
+    show_banner
+    echo -e " ${WHITE}↻ Menghentikan layanan SKTVPN...${NC}"
+    echo -e ""
+    sleep 1
+
+    # Efek animasi sederhana
+    for i in {1..5}; do
+        echo -ne " ${RED}[~]${NC} Progress: ${TEAL}$((i * 20))%${NC}\r"
+        sleep 0.5
+    done
+
+    # Perintah untuk menghentikan layanan
+    systemctl stop sktvpn 2>/dev/null
+
+    # Cek status layanan
+    local status=$(systemctl is-active sktvpn)
+    if [ "$status" == "inactive" ]; then
+        echo -e "\n\n ✅ Layanan SKTVPN ${GREEN}berhasil${NC} di-berhentikan !"
+    else
+        echo -e "\n\n ${RED}❌ Gagal menghentikan${NC} layanan. Pastikan layanan aktif sebelum mencoba menghentikannya.${NC}"
+    fi
+}
+
+# Eksekusi Skrip
+confirm_stop

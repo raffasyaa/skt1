@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Pendefinisian warna
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+TEAL='\033[38;5;30m'
+ORANGE='\033[38;5;208m'
+NC='\e[0m'
+
+# Fungsi untuk mengecek status bot
+if systemctl is-active --quiet sktvpn; then 
+    sts_bot="${GREEN}ONLINE${NC}"
+else
+    sts_bot="${RED}OFFLINE${NC}"
+fi
+
+# Fungsi untuk menampilkan header menu
+function xdxl_Banner() {
+    clear
+    echo -e "${TEAL} ----------------------------------- ${NC}"
+    echo -e "${ORANGE}           BOT MANAGEMENT            ${NC}"
+    echo -e "${TEAL} ----------------------------------- ${NC}"
+}
+
+# Menu utama
+while true; do
+    # Tampilkan header dan menu
+    xdxl_Banner
+    echo -e " ❖ Status Bot: ${sts_bot}"
+    echo -e "" 
+    echo -e " 1. Create Bot"
+    echo -e " 2. Delete Bot"
+    echo -e " 3. Start Bot"
+    echo -e " 4. Stop Bot"
+    echo -e " 5. Restart Bot"
+    echo -e " 6. Auto Backup Bot"
+    echo -e "" 
+    echo -e "${RED} x. Back To Menu ${NC}"
+    echo -e "${TEAL} ----------------------------------- ${NC}"
+    read -p " ➣ Your Choice: " input
+    echo -e ""
+
+    # Validasi input
+    if [[ ! "$input" =~ ^[1-6xX]$ ]]; then
+        echo -e "${RED}Input tidak valid!${NC}"
+        sleep 1
+        continue
+    fi
+
+    # Proses pilihan
+    case $input in
+        1)
+            echo -e "${TEAL}➣ Install Bot Reseller selected${NC}"
+            sktvpn
+            ;;
+        2)
+            echo -e "${TEAL}➣ Delete Bot Reseller selected${NC}"
+            skt-bot-delete
+            ;;
+        3)
+            echo -e "${TEAL}➣ Start Bot Reseller selected${NC}"
+            skt-bot-start
+            ;;
+        4)
+            echo -e "${TEAL}➣ Stop Bot Reseller selected${NC}"
+            skt-bot-stop
+            ;;
+        5)
+            echo -e "${TEAL}➣ Restart Bot Reseller selected${NC}"
+            skt-bot-restart
+            ;;
+        6)
+            echo -e "${TEAL}➣ AutoBackup Bot Reseller selected${NC}"
+            skt-bot-autobackup
+            ;;
+        x|X)
+            clear
+            menu
+            break
+            ;;
+    esac
+done
